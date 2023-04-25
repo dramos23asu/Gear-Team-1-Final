@@ -30,6 +30,8 @@ clc; clear ; close all
 
 %% Input Parameters (Variable)
 
+fprintf('If you get an "imread" error, make sure that the two images from the GitHub repository are in the "Current Folder" of the Matlab Code.\n')
+
 % Image of Property Tables
 material = imread('PropertyTable.jpg');
 figure
@@ -39,7 +41,7 @@ imshow(material)
 
 Sc = [170000 190000; 175000 195000; 180000 225000];
 
-Sc_row = input('Choose the type of heat treatment for the steel (Look at Table in Figure 1): \n \n 1. Flame/Induction Hardened with Type A Pattern\n 2. Flame/Induction Hardened with Type B Pattern\n 3. Carburized and Hardened\n');
+Sc_row = input('\nChoose the type of heat treatment for the steel (Look at Table in Figure 1): \n \n 1. Flame/Induction Hardened with Type A Pattern\n 2. Flame/Induction Hardened with Type B Pattern\n 3. Carburized and Hardened\n');
 
 Sc_column = input('What type of grade would you like to use?\n\n 1. Grade 1\n 2. Grade 2\n');
 
