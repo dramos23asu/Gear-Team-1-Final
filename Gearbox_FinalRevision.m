@@ -7,9 +7,11 @@ clc; clear ; close all
 
 % Before running this code, make sure that you have downloaded the folder
 % together. Do not just run the m-file by itself as there are some files
-% from the folder needed to run this code. 
+% from the folder needed to run this code. This includes the images in the
+% file. If you get an image read error, make sure that the two images are
+% in the "Current Folder" of the Matlab file. 
 
-% 1) Input meterial properties
+% 1) Input material properties
 
 % 2) Input range of gear box heights you wish to test
 
@@ -28,17 +30,30 @@ clc; clear ; close all
 
 %% Input Parameters (Variable)
 
-% Meterial Properties (current: Steel, Flame of Induction Hardened) 
+% Image of Property Tables
+material = imread('PropertyTable.jpg');
+figure
+imshow(material)
 
 % Allowable contact stress number 
-Sc2 = 170000; % Gears 2 and 4 
-Sc3 = 170000; % Pinions 3 and 5
+
+Sc = [170000 190000; 175000 195000; 180000 225000];
+
+Sc_row = input('Choose the type of heat treatment for the steel (Look at Table in Figure 1): \n \n 1. Flame/Induction Hardened with Type A Pattern\n 2. Flame/Induction Hardened with Type B Pattern\n 3. Carburized and Hardened\n');
+
+Sc_column = input('What type of grade would you like to use?\n\n 1. Grade 1\n 2. Grade 2\n');
+
+Sc2 = Sc(Sc_row,Sc_column); % Gears 2 and 4 
+Sc3 = Sc2; % Pinions 3 and 5
 
 % Allowable bending stress number (psi) (table 14-3)
-St_5 = 50000; % Pinion 5
-St_4 = 50000; % Gear 4 
-St_3 = 50000; % Pinion 3 
-St_2 = 50000; % Gear 2
+
+St = [45000 55000; 22000 22000; 55000 65000];
+
+St_5 = St(Sc_row, Sc_column); % Pinion 5
+St_4 = St_5; % Gear 4 
+St_3 = St_5; % Pinion 3 
+St_2 = St_5; % Gear 2
 
 % Elastic Coefficient 
 Cp = 2300;
@@ -131,6 +146,11 @@ T5 = T2*(w2/w5); % ft-lb
 % Transmitted Loads (Tangential)
 W23 = 33000*(H/V23); % loads between 2/3
 W45 = 33000*(H/V45); % loads between 4/5
+
+% Transmitted Loads (Radial)
+
+W23r = W23*tan(p_rad);
+W45r = W45*tan(p_rad);
 
 %% Gear 4 Wear
 I = ((cos(p_rad)*sin(p_rad))/2)*(sqrt(gr)/(sqrt(gr)-1));
@@ -275,14 +295,15 @@ SF_Bending = [n_b2(i);n_b4(i);n_b3(i);n_b5(i)];
 SF_Wear = [n_c2(i);n_c4(i);n_c3(i);n_c5(i)];
 Rotational_Speed_RPM = [w2;w4;w2;w5];
 Tangential_Load_lbf = [W23;W45;W23;W45];
+Radial_Load_lbf = [W23r;W45r;W23r;W45r];
 Diametral_Pitch = [P_min(i);P_min(i);P_min(i);P_min(i)];
 Gearbox_Height_in = gearbox_height(i);
 % Display best optimized design based on safety factors
 
 Optimized_Output = table(Gears,Diameters_in,Teeth_Number,Diametral_Pitch,Face_Width_in,SF_Wear, ...
-    SF_Bending,Rotational_Speed_RPM,Tangential_Load_lbf)
+    SF_Bending,Rotational_Speed_RPM,Tangential_Load_lbf,Radial_Load_lbf)
 
-fprintf('Optimized Gearbox Height = %2.1f in\n',Gearbox_Height_in)
+fprintf('\nOptimized Gearbox Height = %2.1f in\n',Gearbox_Height_in)
 
 %% Safety Factor vs Gearbox Height Plots
 
